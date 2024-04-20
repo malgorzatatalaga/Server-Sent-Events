@@ -15,6 +15,6 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 public class PolygonRouter {
     @Bean
     public RouterFunction<ServerResponse> apiRoute(PolygonHandler polygonHandler) {
-        return route(GET("/{symbol}/{date}").and(accept(MediaType.APPLICATION_JSON)), polygonHandler::getOpenClose);
+        return route(GET("/{symbol}/{date}").and(accept(MediaType.APPLICATION_JSON)), polygonHandler::getOpenCloseAndStream);
     }
 }
