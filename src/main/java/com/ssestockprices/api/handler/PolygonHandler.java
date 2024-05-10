@@ -31,8 +31,28 @@ public class PolygonHandler {
 
         return polygonService.getOpenClose(symbol, date, apiKey).flatMap(doc -> {
             Flux<DailyOpenClose> dataStream = stockDataService.generateDataStream(symbol, doc);
-            return ServerResponse.ok().contentType(MediaType.TEXT_EVENT_STREAM).body(dataStream, DailyOpenClose.class);
-        }).onErrorResume(e -> ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).bodyValue("Error: " + e.getMessage()));
+
+            // Create a message about the stock requested
+            String initialMessage = "You requested " + symbol.toUpperCase() + " stock";
+            Flux<String> messageFlux = Flux.just(initialMessage);
+
+            // Merge the message with the data stream, converting DailyOpenClose to a string if necessary
+            Flux<String> combinedStream = Flux.concat(messageFlux, dataStream.map(this::formatDailyOpenClose));
+
+            return ServerResponse.ok()
+                    .contentType(MediaType.TEXT_EVENT_STREAM)
+                    .body(combinedStream, String.class);
+        }).onErrorResume(e -> ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .bodyValue("Error: " + e.getMessage()));
+    }
+
+    private String formatDailyOpenClose(DailyOpenClose doc) {
+        return "After Hours: " + doc.afterHours() +
+                ", Close: " + doc.close() +
+                ", High: " + doc.high() +
+                ", Low: " + doc.low() +
+                ", Open: " + doc.open() +
+                ", Volume: " + doc.volume();
     }
 }
 
