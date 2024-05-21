@@ -18,4 +18,3 @@ public class PolygonUtils {
         return objectMapper.readValue(json, DailyOpenClose.class);
     }
 }
-
