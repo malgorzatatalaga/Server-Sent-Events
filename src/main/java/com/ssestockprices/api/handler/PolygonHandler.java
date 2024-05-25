@@ -3,7 +3,7 @@ package com.ssestockprices.api.handler;
 import com.ssestockprices.api.config.ApiConfig;
 import com.ssestockprices.api.model.CurrentStockInfo;
 import com.ssestockprices.api.service.PolygonService;
-import com.ssestockprices.update.service.StockDataService;
+import com.ssestockprices.streaming.service.StockDataService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;

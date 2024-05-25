@@ -1,4 +1,4 @@
-package com.ssestockprices.update.service;
+package com.ssestockprices.streaming.service;
 
 import com.ssestockprices.api.model.CurrentStockInfo;
 import org.springframework.stereotype.Service;
