@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.BufferOverflowStrategy;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -28,12 +29,12 @@ public class PolygonHandler {
         String symbol = serverRequest.pathVariable("symbol");
         String date = serverRequest.pathVariable("date");
 
-        return polygonService.getOpenClose(symbol, date, apiKey).flatMap(doc -> {
-            double initialPrice = doc.close(); // Use close price as the current price
-            long initialVolume = doc.volume();
+        return polygonService.getOpenClose(symbol, date, apiKey).flatMap(dailyOpenClose -> {
+            double initialPrice = dailyOpenClose.close();
+            long initialVolume = dailyOpenClose.volume();
 
-            Flux<CurrentStockInfo> dataStream = stockDataService.generateDataStream(symbol, initialPrice, initialVolume);
-
+            Flux<CurrentStockInfo> dataStream = stockDataService.generateDataStream(symbol, initialPrice, initialVolume)
+                    .onBackpressureBuffer(100, BufferOverflowStrategy.DROP_OLDEST);
             return ServerResponse.ok()
                     .contentType(MediaType.TEXT_EVENT_STREAM)
                     .body(dataStream, CurrentStockInfo.class);
@@ -41,4 +42,3 @@ public class PolygonHandler {
                 .bodyValue("Error: " + e.getMessage()));
     }
 }
-
