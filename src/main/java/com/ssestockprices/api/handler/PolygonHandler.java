@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.BufferOverflowStrategy;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -30,15 +31,16 @@ public class PolygonHandler {
         String date = serverRequest.pathVariable("date");
 
         return polygonService.getOpenClose(symbol, date, apiKey).flatMap(dailyOpenClose -> {
-            double initialPrice = dailyOpenClose.close();
-            long initialVolume = dailyOpenClose.volume();
+                    double initialPrice = dailyOpenClose.close();
+                    long initialVolume = dailyOpenClose.volume();
 
-            Flux<CurrentStockInfo> dataStream = stockDataService.generateDataStream(symbol, initialPrice, initialVolume)
-                    .onBackpressureBuffer(100, BufferOverflowStrategy.DROP_OLDEST);
-            return ServerResponse.ok()
-                    .contentType(MediaType.TEXT_EVENT_STREAM)
-                    .body(dataStream, CurrentStockInfo.class);
-        }).onErrorResume(e -> ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .bodyValue("Error: " + e.getMessage()));
+                    Flux<CurrentStockInfo> dataStream = stockDataService.generateDataStream(symbol, initialPrice, initialVolume)
+                            .onBackpressureBuffer(100, BufferOverflowStrategy.DROP_OLDEST);
+                    return ServerResponse.ok()
+                            .contentType(MediaType.TEXT_EVENT_STREAM)
+                            .body(dataStream, CurrentStockInfo.class);
+                })
+                .onErrorMap(e -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error processing request", e));
     }
+
 }
