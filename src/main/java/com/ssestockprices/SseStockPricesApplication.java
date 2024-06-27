@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SseStockPricesApplication {
 
     public static void main(String[] args) {
+
         SpringApplication.run(SseStockPricesApplication.class, args);
     }
 

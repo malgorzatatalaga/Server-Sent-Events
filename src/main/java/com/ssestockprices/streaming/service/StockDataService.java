@@ -16,7 +16,7 @@ public class StockDataService {
         return Flux.fromStream(
                         Stream.generate(() -> generateRandomCurrentStockInfo(symbol, initialPrice, initialVolume))
                 )
-                .delayElements(Duration.ofSeconds(1));
+                .delayElements(Duration.ofSeconds(1)).log();
     }
 
     private CurrentStockInfo generateRandomCurrentStockInfo(String symbol, double lastPrice, long lastVolume) {

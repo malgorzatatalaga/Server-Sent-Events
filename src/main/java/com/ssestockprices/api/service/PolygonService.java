@@ -18,6 +18,6 @@ public class PolygonService {
                 .get()
                 .uri("https://api.polygon.io/v1/open-close/{symbol}/{date}?adjusted=true&apiKey={apiKey}", symbol, date, apiKey)
                 .retrieve()
-                .bodyToMono(DailyOpenClose.class);
+                .bodyToMono(DailyOpenClose.class).log();
     }
 }
