@@ -9,6 +9,5 @@ import org.springframework.context.annotation.Configuration;
 public class ApiConfig {
     @Value("${polygon.api.key}")
     private String polygonApiKey;
-
 }
 

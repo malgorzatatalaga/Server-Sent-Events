@@ -26,15 +26,5 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-    implementation 'io.projectreactor.tools:blockhound:1.0.6.RELEASE'
-    testImplementation 'io.projectreactor.tools:blockhound-junit-platform:1.0.6.RELEASE'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'io.projectreactor:reactor-test:3.5.0'
 }
 
-test {
-    useJUnitPlatform()
-    jvmArgs += ['-XX:+AllowRedefinitionToAddDeleteMethods']
-}
